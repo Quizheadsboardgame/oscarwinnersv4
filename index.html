@@ -3,192 +3,246 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Quiz</title>
+    <title>OSCAR WINNERS</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             font-family: Arial, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            background-color: #0CC0DF; /* Background color */
-        }
-        .container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            width: 40%;
-            max-width: 800px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Shadow */
-            padding: 20px;
-        }
-        img {
-            width: 100%;
-            height: auto;
-            border-radius: 10px;
-            cursor: pointer;
-            border: 5px solid #0CC0DF; /* Outer blue border color */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            transition: transform 0.3s ease-in-out;
-        }
-        img:hover {
-            transform: scale(1.05); /* Slight zoom on hover */
-        }
-        .qa-box {
-            margin-top: 20px;
+            height: 100vh;
+            background-color: transparent;
+            color: black;
             text-align: center;
         }
-        .question, .answer {
-            font-size: 1.2em;
-            margin-bottom: 10px;
-            opacity: 0;
-            transition: opacity 0.4s ease-in-out;
+
+        #quiz-container {
+            background-color: transparent;
+            padding: 20px;
+            max-width: 600px;
+            width: 100%;
         }
-        .visible {
-            opacity: 1; /* Make the text appear smoothly */
+
+        #logo {
+            width: 150px;
+            margin-bottom: 20px;
         }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+
         .question {
-            font-weight: bold;
-            color: #333;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3); /* Text shadow */
+            font-size: 1.5rem;
+            margin-bottom: 10px;
         }
+
         .answer {
-            font-size: 1.1em;
-            color: #555;
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            color: white;
         }
-        .box-shadow {
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Soft shadow around text */
-            padding: 10px;
-            background-color: #f9f9f9; /* Light background to highlight text */
-            border-radius: 8px;
+
+        #next-button {
+            background-color: white;
+            color: black;
+            border: 2px solid #ff9900;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease-in-out;
+        }
+
+        #next-button:hover {
+            background-color: #ffcc00;
+        }
+
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+            }
+            to {
+                opacity: 0;
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .fadeOut {
+            animation: fadeOut 0.5s forwards;
+        }
+
+        .fadeIn {
+            animation: fadeIn 0.5s forwards;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <img id="quizImage" src="https://i.imgur.com/bTO5PRv.png" alt="Quiz Image">
-        <div class="qa-box">
-            <div id="question" class="question box-shadow">Click the image to get a question!</div>
-            <div id="answer" class="answer box-shadow"></div>
-        </div>
+
+<div id="quiz-container">
+    <img id="logo" src="https://i.imgur.com/cyZ0Z21.png" alt="Oscar Logo">
+    <h1>OSCAR WINNERS</h1>
+    <div id="question-container">
+        <div class="question" id="question">Loading question...</div>
+        <div class="answer" id="answer">Loading answer...</div>
+        <button id="next-button" onclick="nextQuestion()">Next Question</button>
     </div>
-    
-    <script>
-        const questionsAndAnswers = [
-            { question: "Which film won Best Picture at the 2020 Oscars?", answer: "Parasite" },
-            { question: "Who won Best Actor for his role in 'Bohemian Rhapsody'?", answer: "Rami Malek" },
-            { question: "Which movie won Best Picture at the 2018 Oscars?", answer: "The Shape of Water" },
-            { question: "Who won the Best Actress Oscar in 2021 for 'Nomadland'?", answer: "Frances McDormand" },
-            { question: "Which movie won Best Picture in 1994?", answer: "Forrest Gump" },
-            { question: "Who won Best Actor in 2020 for 'Joker'?", answer: "Joaquin Phoenix" },
-            { question: "Which film won the most Oscars in 2004?", answer: "The Lord of the Rings: The Return of the King" },
-            { question: "Who was the first woman to win the Best Director Oscar?", answer: "Kathryn Bigelow for 'The Hurt Locker'" },
-            { question: "Which actor has won the most Oscars for acting?", answer: "Katharine Hepburn, with 4 Oscars" },
-            { question: "What film won Best Picture in 2019?", answer: "Green Book" },
-            { question: "Who won Best Supporting Actor in 2008 for 'No Country for Old Men'?", answer: "Javier Bardem" },
-            { question: "Which film won the Best Animated Feature Oscar in 2010?", answer: "Up" },
-            { question: "Who won Best Actress for 'La La Land'?", answer: "Emma Stone" },
-            { question: "Which film won Best Picture in 1999?", answer: "American Beauty" },
-            { question: "Who won Best Actor for 'There Will Be Blood' in 2008?", answer: "Daniel Day-Lewis" },
-            { question: "Which film won Best Picture in 2016?", answer: "Spotlight" },
-            { question: "Who won Best Actress for 'The Blind Side' in 2010?", answer: "Sandra Bullock" },
-            { question: "Which film won Best Picture at the 2001 Oscars?", answer: "Gladiator" },
-            { question: "Who won Best Director for 'Schindler's List'?", answer: "Steven Spielberg" },
-            { question: "Which movie won Best Picture at the 1995 Oscars?", answer: "Braveheart" },
-            { question: "Who won Best Supporting Actress for 'Chicago' in 2003?", answer: "Catherine Zeta-Jones" },
-            { question: "Which film won Best Picture in 1990?", answer: "Driving Miss Daisy" },
-            { question: "Who won Best Actor for 'Training Day'?", answer: "Denzel Washington" },
-            { question: "Which film won Best Picture in 1981?", answer: "Chariots of Fire" },
-            { question: "Who won Best Actress for 'Silver Linings Playbook'?", answer: "Jennifer Lawrence" },
-            { question: "Which film won Best Picture in 2007?", answer: "The Departed" },
-            { question: "Who won Best Director for 'The Revenant'?", answer: "Alejandro González Iñárritu" },
-            { question: "Which film won Best Picture in 1980?", answer: "Kramer vs. Kramer" },
-            { question: "Who won Best Actor for 'The King's Speech'?", answer: "Colin Firth" },
-            { question: "Which movie won Best Picture in 2009?", answer: "Slumdog Millionaire" },
-            { question: "Who won Best Actress for 'Black Swan'?", answer: "Natalie Portman" },
-            { question: "Which film won Best Picture in 1997?", answer: "The English Patient" },
-            { question: "Who won Best Supporting Actor for 'The Dark Knight'?", answer: "Heath Ledger" },
-            { question: "Which movie won Best Picture at the 1998 Oscars?", answer: "Titanic" },
-            { question: "Who won Best Actress for 'The Favourite' in 2019?", answer: "Olivia Colman" },
-            { question: "Which film won Best Picture in 1972?", answer: "The French Connection" },
-            { question: "Who won Best Supporting Actress for 'Girl, Interrupted'?", answer: "Angelina Jolie" },
-            { question: "Which film won Best Picture in 2003?", answer: "Chicago" },
-            { question: "Who won Best Director for 'Life of Pi'?", answer: "Ang Lee" },
-            { question: "Which movie won Best Picture in 1987?", answer: "Platoon" },
-            { question: "Who won Best Actor for 'The Pianist'?", answer: "Adrien Brody" },
-            { question: "Which movie won Best Picture in 1977?", answer: "Rocky" },
-            { question: "Who won Best Supporting Actress for '12 Years a Slave'?", answer: "Lupita Nyong'o" },
-            { question: "Which film won Best Picture in 2006?", answer: "Crash" },
-            { question: "Who won Best Actor for 'Gladiator'?", answer: "Russell Crowe" },
-            { question: "Which film won Best Picture in 1983?", answer: "Gandhi" },
-            { question: "Who won Best Actress for 'Erin Brockovich'?", answer: "Julia Roberts" },
-            { question: "Which film won Best Picture in 2013?", answer: "Argo" },
-            { question: "Who won Best Director for 'Birdman'?", answer: "Alejandro González Iñárritu" },
-            { question: "Which movie won Best Picture at the 2012 Oscars?", answer: "The Artist" },
-            { question: "Who won Best Supporting Actor for 'The Fighter'?", answer: "Christian Bale" },
-            { question: "Which movie won Best Picture in 1965?", answer: "My Fair Lady" },
-            { question: "Who won Best Actress for 'The Iron Lady'?", answer: "Meryl Streep" },
-            { question: "Which film won Best Picture in 2005?", answer: "Million Dollar Baby" },
-            { question: "Who won Best Actor for 'The Theory of Everything'?", answer: "Eddie Redmayne" },
-            { question: "Which film won Best Picture in 1993?", answer: "Schindler's List" },
-            { question: "Who won Best Supporting Actress for 'Vicky Cristina Barcelona'?", answer: "Penélope Cruz" },
-            { question: "Which film won Best Picture in 1975?", answer: "One Flew Over the Cuckoo's Nest" },
-            { question: "Who won Best Actor for 'Dallas Buyers Club'?", answer: "Matthew McConaughey" },
-            { question: "Which movie won Best Picture in 2017?", answer: "Moonlight" },
-            { question: "Who won Best Director for 'Gravity'?", answer: "Alfonso Cuarón" },
-            { question: "Which movie won Best Picture in 1985?", answer: "Amadeus" },
-            { question: "Who won Best Actress for 'Room'?", answer: "Brie Larson" },
-            { question: "Which movie won Best Picture in 1991?", answer: "Dances with Wolves" },
-            { question: "Who won Best Supporting Actor for 'Once Upon a Time in Hollywood'?", answer: "Brad Pitt" },
-            { question: "Which film won Best Picture in 1989?", answer: "Rain Man" },
-            { question: "Who won Best Director for 'La La Land'?", answer: "Damien Chazelle" },
-            { question: "Which film won Best Picture in 2015?", answer: "Birdman" },
-            { question: "Who won Best Actress for 'Still Alice'?", answer: "Julianne Moore" },
-            { question: "Which film won Best Picture in 2000?", answer: "American Beauty" },
-            { question: "Who won Best Supporting Actress for 'Les Misérables'?", answer: "Anne Hathaway" },
-            { question: "Which film won Best Picture in 1992?", answer: "The Silence of the Lambs" },
-            { question: "Who won Best Actor for 'Lincoln'?", answer: "Daniel Day-Lewis" },
-            { question: "Which film won Best Picture in 1984?", answer: "Terms of Endearment" },
-            { question: "Who won Best Supporting Actor for 'Syriana'?", answer: "George Clooney" },
-            { question: "Which movie won Best Picture in 2014?", answer: "12 Years a Slave" },
-            { question: "Who won Best Actress for 'Blue Jasmine'?", answer: "Cate Blanchett" },
-            { question: "Which movie won Best Picture in 1982?", answer: "Gandhi" },
-            { question: "Who won Best Actor for 'Cast Away'?", answer: "Tom Hanks" },
-            { question: "Which film won Best Picture in 1996?", answer: "Braveheart" },
-            { question: "Who won Best Actress for 'A Beautiful Mind'?", answer: "Jennifer Connelly" },
-            { question: "Which movie won Best Picture in 1988?", answer: "The Last Emperor" },
-            { question: "Who won Best Supporting Actress for 'Boyhood'?", answer: "Patricia Arquette" },
-            { question: "Which movie won Best Picture in 2011?", answer: "The King's Speech" },
-            { question: "Who won Best Actor for 'The Revenant'?", answer: "Leonardo DiCaprio" },
-            { question: "Which movie won Best Picture in 2002?", answer: "A Beautiful Mind" },
-            { question: "Who won Best Actress for 'Walk the Line'?", answer: "Reese Witherspoon" },
-            { question: "Which movie won Best Picture in 1990?", answer: "Driving Miss Daisy" }
-        ];
+</div>
 
-        document.getElementById('quizImage').addEventListener('click', function() {
-            // Fade out effect
-            document.getElementById('question').classList.remove('visible');
-            document.getElementById('answer').classList.remove('visible');
+<script>
+    // Question and answers data
+    const quizData = [
+        { question: "Which film won Best Picture at the 2020 Oscars?", answer: "Parasite" },
+        { question: "Who won Best Actor for his role in 'Bohemian Rhapsody'?", answer: "Rami Malek" },
+        { question: "Which movie won Best Picture at the 2018 Oscars?", answer: "The Shape of Water" },
+        { question: "Who won the Best Actress Oscar in 2021 for 'Nomadland'?", answer: "Frances McDormand" },
+        { question: "Which movie won Best Picture in 1994?", answer: "Forrest Gump" },
+        { question: "Who won Best Actor in 2020 for 'Joker'?", answer: "Joaquin Phoenix" },
+        { question: "Which film won the most Oscars in 2004?", answer: "The Lord of the Rings: The Return of the King" },
+        { question: "Who was the first woman to win the Best Director Oscar?", answer: "Kathryn Bigelow for The Hurt Locker" },
+        { question: "Which actor has won the most Oscars for acting?", answer: "Katharine Hepburn, with 4 Oscars" },
+        { question: "What film won Best Picture in 2019?", answer: "Green Book" },
+        { question: "Who won Best Supporting Actor in 2008 for 'No Country for Old Men'?", answer: "Javier Bardem" },
+        { question: "Which film won the Best Animated Feature Oscar in 2010?", answer: "Up" },
+        { question: "Who won Best Actress for 'La La Land'?", answer: "Emma Stone" },
+        { question: "Which film won Best Picture in 1999?", answer: "American Beauty" },
+        { question: "Who won Best Actor for 'There Will Be Blood' in 2008?", answer: "Daniel Day-Lewis" },
+        { question: "Which film won Best Picture in 2016?", answer: "Spotlight" },
+        { question: "Who won Best Actress for 'The Blind Side' in 2010?", answer: "Sandra Bullock" },
+        { question: "Which film won Best Picture at the 2001 Oscars?", answer: "Gladiator" },
+        { question: "Who won Best Director for 'Schindler's List'?", answer: "Steven Spielberg" },
+        { question: "Which movie won Best Picture at the 1995 Oscars?", answer: "Braveheart" },
+        { question: "Who won Best Supporting Actress for 'Chicago' in 2003?", answer: "Catherine Zeta-Jones" },
+        { question: "Which film won Best Picture in 1990?", answer: "Driving Miss Daisy" },
+        { question: "Who won Best Actor for 'Training Day'?", answer: "Denzel Washington" },
+        { question: "Which film won Best Picture in 1981?", answer: "Chariots of Fire" },
+        { question: "Who won Best Actress for 'Silver Linings Playbook'?", answer: "Jennifer Lawrence" },
+        { question: "Which film won Best Picture in 2007?", answer: "The Departed" },
+        { question: "Who won Best Director for 'The Revenant'?", answer: "Alejandro González Iñárritu" },
+        { question: "Which film won Best Picture in 1980?", answer: "Kramer vs. Kramer" },
+        { question: "Who won Best Actor for 'The King's Speech'?", answer: "Colin Firth" },
+        { question: "Which movie won Best Picture in 2009?", answer: "Slumdog Millionaire" },
+        { question: "Who won Best Actress for 'Black Swan'?", answer: "Natalie Portman" },
+        { question: "Which film won Best Picture in 1997?", answer: "The English Patient" },
+        { question: "Who won Best Supporting Actor for 'The Dark Knight'?", answer: "Heath Ledger" },
+        { question: "Which movie won Best Picture at the 1998 Oscars?", answer: "Titanic" },
+        { question: "Who won Best Actress for 'The Favourite' in 2019?", answer: "Olivia Colman" },
+        { question: "Which film won Best Picture in 1972?", answer: "The French Connection" },
+        { question: "Who won Best Supporting Actress for 'Girl, Interrupted'?", answer: "Angelina Jolie" },
+        { question: "Which film won Best Picture in 2003?", answer: "Chicago" },
+        { question: "Who won Best Director for 'Life of Pi'?", answer: "Ang Lee" },
+        { question: "Which movie won Best Picture in 1987?", answer: "Platoon" },
+        { question: "Who won Best Actor for 'The Pianist'?", answer: "Adrien Brody" },
+        { question: "Which movie won Best Picture in 1977?", answer: "Rocky" },
+        { question: "Who won Best Supporting Actress for '12 Years a Slave'?", answer: "Lupita Nyong'o" },
+        { question: "Which film won Best Picture in 2006?", answer: "Crash" },
+        { question: "Who won Best Actor for 'Gladiator'?", answer: "Russell Crowe" },
+        { question: "Which film won Best Picture in 1983?", answer: "Gandhi" },
+        { question: "Who won Best Actress for 'Erin Brockovich'?", answer: "Julia Roberts" },
+        { question: "Which film won Best Picture in 2013?", answer: "Argo" },
+        { question: "Who won Best Director for 'Birdman'?", answer: "Alejandro González Iñárritu" },
+        { question: "Which movie won Best Picture at the 2012 Oscars?", answer: "The Artist" },
+        { question: "Who won Best Supporting Actor for 'The Fighter'?", answer: "Christian Bale" },
+        { question: "Which movie won Best Picture in 1965?", answer: "My Fair Lady" },
+        { question: "Who won Best Actress for 'The Iron Lady'?", answer: "Meryl Streep" },
+        { question: "Which film won Best Picture in 2005?", answer: "Million Dollar Baby" },
+        { question: "Who won Best Actor for 'The Theory of Everything'?", answer: "Eddie Redmayne" },
+        { question: "Which film won Best Picture in 1993?", answer: "Schindler's List" },
+        { question: "Who won Best Supporting Actress for 'Vicky Cristina Barcelona'?", answer: "Penélope Cruz" },
+        { question: "Which film won Best Picture in 1975?", answer: "One Flew Over the Cuckoo's Nest" },
+        { question: "Who won Best Actor for 'Dallas Buyers Club'?", answer: "Matthew McConaughey" },
+        { question: "Which movie won Best Picture in 2017?", answer: "Moonlight" },
+        { question: "Who won Best Director for 'Gravity'?", answer: "Alfonso Cuarón" },
+        { question: "Which movie won Best Picture in 1985?", answer: "Amadeus" },
+        { question: "Who won Best Actress for 'Room'?", answer: "Brie Larson" },
+        { question: "Which movie won Best Picture in 1991?", answer: "Dances with Wolves" },
+        { question: "Who won Best Supporting Actor for 'Once Upon a Time in Hollywood'?", answer: "Brad Pitt" },
+        { question: "Which film won Best Picture in 1989?", answer: "Rain Man" },
+        { question: "Who won Best Director for 'La La Land'?", answer: "Damien Chazelle" },
+        { question: "Which film won Best Picture in 2015?", answer: "Birdman" },
+        { question: "Who won Best Actress for 'Still Alice'?", answer: "Julianne Moore" },
+        { question: "Which film won Best Picture in 2000?", answer: "American Beauty" },
+        { question: "Who won Best Supporting Actress for 'Les Misérables'?", answer: "Anne Hathaway" },
+        { question: "Which film won Best Picture in 1992?", answer: "The Silence of the Lambs" },
+        { question: "Who won Best Actor for 'Lincoln'?", answer: "Daniel Day-Lewis" },
+        { question: "Which film won Best Picture in 1984?", answer: "Terms of Endearment" },
+        { question: "Who won Best Supporting Actor for 'Syriana'?", answer: "George Clooney" },
+        { question: "Which movie won Best Picture in 2014?", answer: "12 Years a Slave" },
+        { question: "Who won Best Actress for 'Blue Jasmine'?", answer: "Cate Blanchett" },
+        { question: "Which movie won Best Picture in 1982?", answer: "Gandhi" },
+        { question: "Who won Best Actor for 'Cast Away'?", answer: "Tom Hanks" },
+        { question: "Which film won Best Picture in 1996?", answer: "Braveheart" },
+        { question: "Who won Best Actress for 'A Beautiful Mind'?", answer: "Jennifer Connelly" },
+        { question: "Which movie won Best Picture in 1988?", answer: "The Last Emperor" },
+        { question: "Who won Best Supporting Actress for 'Boyhood'?", answer: "Patricia Arquette" },
+        { question: "Which movie won Best Picture in 2011?", answer: "The King's Speech" },
+        { question: "Who won Best Actor for 'The Revenant'?", answer: "Leonardo DiCaprio" },
+        { question: "Which movie won Best Picture in 2002?", answer: "A Beautiful Mind" },
+        { question: "Who won Best Actress for 'Walk the Line'?", answer: "Reese Witherspoon" },
+        { question: "Which movie won Best Picture in 1990?", answer: "Driving Miss Daisy" }
+    ];
 
-            setTimeout(function() {
-                // Generate random question and answer
-                const randomIndex = Math.floor(Math.random() * questionsAndAnswers.length);
-                const question = questionsAndAnswers[randomIndex].question;
-                const answer = questionsAndAnswers[randomIndex].answer;
+    let currentQuestionIndex = 0;
 
-                // Update question and answer
-                document.getElementById('question').textContent = question;
-                document.getElementById('answer').textContent = answer;
+    // Shuffle the quiz data
+    function shuffle(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+    }
 
-                // Fade in effect
-                document.getElementById('question').classList.add('visible');
-                document.getElementById('answer').classList.add('visible');
-            }, 400); // Allow time for fade-out
-        });
-    </script>
+    // Start the quiz
+    shuffle(quizData);
+    showQuestion();
+
+    function showQuestion() {
+        const questionContainer = document.getElementById("question");
+        const answerContainer = document.getElementById("answer");
+
+        questionContainer.innerText = quizData[currentQuestionIndex].question;
+        answerContainer.innerText = "Loading answer...";
+
+        // Fade in effect
+        answerContainer.classList.remove("fadeIn");
+        answerContainer.classList.add("fadeOut");
+
+        setTimeout(() => {
+            answerContainer.innerText = quizData[currentQuestionIndex].answer;
+            answerContainer.classList.remove("fadeOut");
+            answerContainer.classList.add("fadeIn");
+        }, 500);
+    }
+
+    function nextQuestion() {
+        currentQuestionIndex++;
+        if (currentQuestionIndex < quizData.length) {
+            showQuestion();
+        } else {
+            const questionContainer = document.getElementById("question");
+            const answerContainer = document.getElementById("answer");
+            questionContainer.innerText = "Thank you for playing!";
+            answerContainer.innerText = "";
+            document.getElementById("next-button").style.display = "none"; // Hide the next button
+        }
+    }
+</script>
+
 </body>
 </html>
